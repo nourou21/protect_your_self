@@ -128,29 +128,35 @@ class _ControlPageState extends State<ControlPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ElevatedButton(
-                  onPressed: () => _toggleManualMode(true),
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-                    backgroundColor: _isManualMode ? Colors.green : Colors.grey,
-                  ),
-                  child: Text(
-                    'Manual',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                ),
-                SizedBox(width: 20),
-                ElevatedButton(
-                  onPressed: () => _toggleManualMode(false),
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-                    backgroundColor:
-                        !_isManualMode ? Colors.green : Colors.grey,
-                  ),
-                  child: Text(
-                    'Auto',
-                    style: TextStyle(fontSize: 18),
-                  ),
+                ToggleButtons(
+                  borderRadius: BorderRadius.circular(10.0),
+                  selectedColor: Colors.white,
+                  fillColor: Colors.green,
+                  onPressed: (int index) {
+                    setState(() {
+                      _isManualMode = index == 0; // 0 for Manual, 1 for Auto
+                      _toggleManualMode(_isManualMode);
+                    });
+                  },
+                  isSelected: [_isManualMode, !_isManualMode],
+                  children: [
+                    Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      child: Text(
+                        'Manual',
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ),
+                    Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      child: Text(
+                        'Auto',
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -159,7 +165,7 @@ class _ControlPageState extends State<ControlPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(height: 300),
+                    SizedBox(height: 40),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -228,7 +234,7 @@ class _ControlPageState extends State<ControlPage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 20),
+                    SizedBox(height: 300),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -280,7 +286,7 @@ class _ControlPageState extends State<ControlPage> {
                           onPressed: () => _toggleWindowState(false),
                           style: ElevatedButton.styleFrom(
                             padding: EdgeInsets.symmetric(
-                                vertical: 20, horizontal: 33),
+                                vertical: 20, horizontal: 28),
                             backgroundColor: Colors.red,
                           ),
                           child: Text(
