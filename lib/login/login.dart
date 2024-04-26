@@ -200,6 +200,8 @@ class _LoginState extends State<Login> {
 
       // Successfully signed in
       if (userCredential.user != null) {
+        // Save rememberMe status and credentials
+        await _saveRememberMe();
         // Navigate to the next screen
         Navigator.pushReplacement(
           context,
