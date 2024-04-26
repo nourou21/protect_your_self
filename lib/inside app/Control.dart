@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
-import 'package:login_flutter/main.dart';
 
 class ControlPage extends StatefulWidget {
   @override
@@ -12,14 +10,9 @@ class ControlPage extends StatefulWidget {
 }
 
 class _ControlPageState extends State<ControlPage> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   final DatabaseReference _database = FirebaseDatabase.instance.reference();
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
-  bool _isFanOn = false;
-  bool _areWindowsOpen = false;
-  Color _fanButtonColor = Colors.red;
-  Color _windowButtonColor = Colors.red;
   Color _backgroundColor = Colors.blueGrey.withOpacity(0.2);
   bool _isGasWarningShown = false;
   bool _isManualMode = false;
@@ -48,40 +41,30 @@ class _ControlPageState extends State<ControlPage> {
 
   void _setupFirebaseMessaging() {
     _firebaseMessaging.getToken().then((token) {
-      print('FCM Token: $token');
     });
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print('Received message: ${message.notification?.title}');
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('App opened from notification: ${message.notification?.title}');
     });
 
     FirebaseMessaging.instance.getInitialMessage().then((message) {
       if (message != null) {
-        print('Opened app from notification: ${message.notification?.title}');
       }
     });
   }
 
   void _listenToFanState() {
     _database.child('state/fan').onValue.listen((event) {
-      var fanState = event.snapshot.value;
       setState(() {
-        _isFanOn = fanState == 'on';
-        _fanButtonColor = _isFanOn ? Colors.green : Colors.red;
       });
     });
   }
 
   void _listenToWindowState() {
     _database.child('state/Servo').onValue.listen((event) {
-      var windowState = event.snapshot.value;
       setState(() {
-        _areWindowsOpen = windowState == 'open';
-        _windowButtonColor = _areWindowsOpen ? Colors.green : Colors.red;
       });
     });
   }
@@ -94,9 +77,9 @@ class _ControlPageState extends State<ControlPage> {
         color: _backgroundColor,
         child: Column(
           children: [
-            SizedBox(height: 40),
+            const SizedBox(height: 40),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               child: StreamBuilder(
                 stream: _database.child('state/lcd').onValue,
                 builder: (context, snapshot) {
@@ -108,17 +91,17 @@ class _ControlPageState extends State<ControlPage> {
                       if (lcdValue > 200) {
                         return Text(
                           'Danger: $lcdValue',
-                          style: TextStyle(fontSize: 20, color: Colors.red),
+                          style: const TextStyle(fontSize: 20, color: Colors.red),
                         );
                       } else {
                         return Text(
                           'Value: $lcdValue',
-                          style: TextStyle(fontSize: 20),
+                          style: const TextStyle(fontSize: 20),
                         );
                       }
                     }
                   }
-                  return Text(
+                  return const Text(
                     'Loading...',
                     style: TextStyle(fontSize: 20),
                   );
@@ -142,16 +125,16 @@ class _ControlPageState extends State<ControlPage> {
                   children: [
                     Container(
                       padding:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                      child: Text(
+                          const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      child:const Text(
                         'Manual',
                         style: TextStyle(fontSize: 18),
                       ),
                     ),
                     Container(
                       padding:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                      child: Text(
+                          const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      child: const Text(
                         'Auto',
                         style: TextStyle(fontSize: 18),
                       ),
@@ -165,7 +148,7 @@ class _ControlPageState extends State<ControlPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(height: 40),
+                    const SizedBox(height: 40),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -183,23 +166,23 @@ class _ControlPageState extends State<ControlPage> {
                                   return GestureDetector(
                                     onTap: () {}, // Disable onTap functionality
                                     child: Container(
-                                      padding: EdgeInsets.symmetric(
+                                      padding: const EdgeInsets.symmetric(
                                           vertical: 20, horizontal: 40),
                                       color:
                                           isFanOn ? Colors.green : Colors.red,
                                       child: Text(
                                         isFanOn ? 'Fan is On' : 'Fan is Off',
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             fontSize: 18, color: Colors.white),
                                       ),
                                     ),
                                   );
                                 } else {
-                                  return CircularProgressIndicator();
+                                  return const CircularProgressIndicator();
                                 }
                               },
                             ),
-                            SizedBox(width: 20),
+                            const SizedBox(width: 20),
                             StreamBuilder(
                               stream:
                                   _database.child('state/servo state').onValue,
@@ -211,7 +194,7 @@ class _ControlPageState extends State<ControlPage> {
                                   return GestureDetector(
                                     onTap: () {}, // Disable onTap functionality
                                     child: Container(
-                                      padding: EdgeInsets.symmetric(
+                                      padding: const EdgeInsets.symmetric(
                                           vertical: 20, horizontal: 38),
                                       color: areWindowsOpen
                                           ? Colors.green
@@ -220,13 +203,13 @@ class _ControlPageState extends State<ControlPage> {
                                         areWindowsOpen
                                             ? 'Windows Open'
                                             : 'Windows Closed',
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             fontSize: 18, color: Colors.white),
                                       ),
                                     ),
                                   );
                                 } else {
-                                  return CircularProgressIndicator();
+                                  return const CircularProgressIndicator();
                                 }
                               },
                             ),
@@ -234,69 +217,69 @@ class _ControlPageState extends State<ControlPage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 300),
+                    const SizedBox(height: 300),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         ElevatedButton(
                           onPressed: () => _toggleFanState(true),
                           style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                                 vertical: 20, horizontal: 40),
                             backgroundColor: Colors.green,
                           ),
-                          child: Text(
+                          child: const Text(
                             'Turn Fan On',
                             style: TextStyle(fontSize: 18),
                           ),
                         ),
-                        SizedBox(width: 20),
+                        const SizedBox(width: 20),
                         ElevatedButton(
                           onPressed: () => _toggleFanState(false),
                           style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                                 vertical: 20, horizontal: 40),
                             backgroundColor: Colors.red,
                           ),
-                          child: Text(
+                          child: const Text(
                             'Turn Fan Off',
                             style: TextStyle(fontSize: 18),
                           ),
                         ),
                       ],
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         ElevatedButton(
                           onPressed: () => _toggleWindowState(true),
                           style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                                 vertical: 20, horizontal: 38),
                             backgroundColor: Colors.green,
                           ),
-                          child: Text(
+                          child: const Text(
                             'Open Windows',
                             style: TextStyle(fontSize: 18),
                           ),
                         ),
-                        SizedBox(width: 12),
+                        const SizedBox(width: 12),
                         ElevatedButton(
                           onPressed: () => _toggleWindowState(false),
                           style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                                 vertical: 20, horizontal: 28),
                             backgroundColor: Colors.red,
                           ),
-                          child: Text(
+                          child: const Text(
                             'Close Windows',
                             style: TextStyle(fontSize: 18),
                           ),
                         ),
                       ],
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                   ],
                 ),
               ),
@@ -311,9 +294,8 @@ class _ControlPageState extends State<ControlPage> {
     try {
       var newFanState = newState ? 'on' : 'off';
       await _database.child('state/fan').set(newFanState);
-      print('Fan state updated to: $newFanState');
+    // ignore: empty_catches
     } catch (e) {
-      print('Error updating fan state: $e');
     }
   }
 
@@ -321,9 +303,8 @@ class _ControlPageState extends State<ControlPage> {
     try {
       var newWindowState = newState ? 'open' : 'close';
       await _database.child('state/Servo').set(newWindowState);
-      print('Windows state updated to: $newWindowState');
+    // ignore: empty_catches
     } catch (e) {
-      print('Error updating window state: $e');
     }
   }
 
@@ -331,10 +312,9 @@ class _ControlPageState extends State<ControlPage> {
     try {
       _isManualMode = isManual;
       await _database.child('state/manual').set(isManual);
-      print('Mode set to ${isManual ? 'Manual' : 'Auto'}');
       setState(() {}); // Refresh the UI to reflect the mode change
+    // ignore: empty_catches
     } catch (e) {
-      print('Error setting mode: $e');
     }
   }
 
@@ -366,14 +346,14 @@ class _ControlPageState extends State<ControlPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Gas Detection Warning'),
-          content: Text('Gas level is above 200. Please take precautions.'),
+          title: const Text('Gas Detection Warning'),
+          content: const Text('Gas level is above 200. Please take precautions.'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
           ],
         );

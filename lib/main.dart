@@ -1,9 +1,11 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart'; // Import Firebase Core
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:login_flutter/login/login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
@@ -19,7 +21,27 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Ensure Flutter is initialized
   await _initFirebase(); // Initialize Firebase
   await _initHive();
-  runApp(const MainApp());
+
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? savedUsername = prefs.getString('username');
+  String? savedPassword = prefs.getString('password');
+
+  if (savedUsername != null && savedPassword != null) {
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: savedUsername,
+        password: savedPassword,
+      );
+
+      runApp(
+          const MainApp()); // Navigate to the next screen if sign-in is successful
+      return;
+    } catch (e) {
+      print("Automatic sign-in failed: $e");
+    }
+  }
+
+  runApp(const MainApp()); // Show login page if automatic sign-in failed
 }
 
 Future<void> _initFirebase() async {
